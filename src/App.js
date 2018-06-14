@@ -4,14 +4,15 @@ import Test from "./result/Test";
 import MissingRoundList from "./result/MissingRoundList";
 import MissingTxsList from "./result/MissingTxsList";
 import RewardList from "./result/RewardList";
+import TxsPublicRpcList from "./result/TxsPublicRpcList";
 import axios from "axios";
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 
 class App extends Component {
     state = {
-        network: "Core",
-        lastSeconds: 5600,
-        passed: "Failed",
+        network: "Sokol",
+        lastSeconds: 7200,
+        passed: "All",
 
         missingRoundsDescription: "Check if any validator nodes are missing rounds",
         missingRoundsRuns: [],
@@ -20,7 +21,10 @@ class App extends Component {
         missingTxsRuns: [],
 
         rewardDescription: "Check if payout script works properly for all nodes (check mining address balance)",
-        rewardRuns :[]
+        rewardRuns: [],
+
+        txsPublicRpcDescription: "Periodically send txs via public rpc endpoint",
+        txsPublicRpcRuns: []
 
         // todo tests all, some
     };
@@ -62,13 +66,19 @@ class App extends Component {
                     return r;
                 });
 
+                const newTxsPublicRpcRuns = response.data.txsViaPublicRpcCheck.runs.map(r => {
+                    r.key = r.id;
+                    return r;
+                });
+
                 console.log("response.data: " + response.data);
                 console.log("response.data.missingRoundCheck: " + JSON.stringify(response.data.missingRoundCheck));
                 console.log("newMissingRoundsRuns: " + JSON.stringify(newMissingRoundsRuns));
                 const newState = Object.assign({}, this.state, {
                     missingRoundsRuns: newMissingRoundsRuns,
                     missingTxsRuns: newMissingTxsRuns,
-                    rewardRuns: newRewardRuns
+                    rewardRuns: newRewardRuns,
+                    txsPublicRpcRuns: newTxsPublicRpcRuns
                 });
                 console.log("newState: " + newState);
                 // store the new state object in the component's state
@@ -81,7 +91,9 @@ class App extends Component {
 
     componentDidMount() {
         console.log('componentDidMount');
-        this.getResults("http://poatest.westus.cloudapp.azure.com:3000/sokol/api/all?lastseconds=72000");
+        let url = "http://poatest.westus.cloudapp.azure.com:3000/" + this.state.network + "/api/" + this.state.passed + "?lastseconds=" + this.state.lastSeconds;
+        console.log('url: ' + url);
+        this.getResults(url);
     }
 
     render() {
@@ -137,6 +149,8 @@ class App extends Component {
                     <br/>
                     <Test description={this.state.rewardDescription}/>
                     <RewardList rewardRuns={this.state.rewardRuns}/>
+                    <Test description={this.state.txsPublicRpcDescription}/>
+                    <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
 
                 </div>
             </div>
