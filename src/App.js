@@ -5,6 +5,7 @@ import MissingRoundList from "./result/MissingRoundList";
 import MissingTxsList from "./result/MissingTxsList";
 import RewardList from "./result/RewardList";
 import TxsPublicRpcList from "./result/TxsPublicRpcList";
+import ReorgsList from "./result/ReorgsList";
 import axios from "axios";
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 
@@ -24,7 +25,10 @@ class App extends Component {
         rewardRuns: [],
 
         txsPublicRpcDescription: "Periodically send txs via public rpc endpoint",
-        txsPublicRpcRuns: []
+        txsPublicRpcRuns: [],
+
+        reorgsDescription: "Check for reorgs",
+        reorgs: []
 
         // todo tests all, some
     };
@@ -71,14 +75,17 @@ class App extends Component {
                     return r;
                 });
 
-                console.log("response.data: " + response.data);
-                console.log("response.data.missingRoundCheck: " + JSON.stringify(response.data.missingRoundCheck));
-                console.log("newMissingRoundsRuns: " + JSON.stringify(newMissingRoundsRuns));
+                const newReorgs = response.data.reorgsCheck.reorgs.map(r => {
+                    r.key = r.id;
+                    return r;
+                });
+
                 const newState = Object.assign({}, this.state, {
                     missingRoundsRuns: newMissingRoundsRuns,
                     missingTxsRuns: newMissingTxsRuns,
                     rewardRuns: newRewardRuns,
-                    txsPublicRpcRuns: newTxsPublicRpcRuns
+                    txsPublicRpcRuns: newTxsPublicRpcRuns,
+                    reorgs: newReorgs
                 });
                 console.log("newState: " + newState);
                 // store the new state object in the component's state
@@ -151,6 +158,8 @@ class App extends Component {
                     <RewardList rewardRuns={this.state.rewardRuns}/>
                     <Test description={this.state.txsPublicRpcDescription}/>
                     <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
+                    <Test description={this.state.reorgsDescription}/>
+                    <ReorgsList reorgs={this.state.reorgs}/>
 
                 </div>
             </div>
