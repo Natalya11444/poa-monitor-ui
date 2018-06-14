@@ -3,6 +3,7 @@ import './App.css';
 import Test from "./result/Test";
 import MissingRoundList from "./result/MissingRoundList";
 import MissingTxsList from "./result/MissingTxsList";
+import RewardList from "./result/RewardList";
 import axios from "axios";
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 
@@ -16,7 +17,12 @@ class App extends Component {
         missingRoundsRuns: [],
 
         missingTxsCheckDescription: "Check that all validator nodes are able to mine non-empty blocks",
-        missingTxsRuns: []
+        missingTxsRuns: [],
+
+        rewardDescription: "Check if payout script works properly for all nodes (check mining address balance)",
+        rewardRuns :[]
+
+        // todo tests all, some
     };
 
     handleSubmit(event) {
@@ -51,12 +57,18 @@ class App extends Component {
                     r.key = r.id;
                     return r;
                 });
+                const newRewardRuns = response.data.miningRewardCheck.runs.map(r => {
+                    r.key = r.id;
+                    return r;
+                });
+
                 console.log("response.data: " + response.data);
                 console.log("response.data.missingRoundCheck: " + JSON.stringify(response.data.missingRoundCheck));
                 console.log("newMissingRoundsRuns: " + JSON.stringify(newMissingRoundsRuns));
                 const newState = Object.assign({}, this.state, {
                     missingRoundsRuns: newMissingRoundsRuns,
-                    missingTxsRuns: newMissingTxsRuns
+                    missingTxsRuns: newMissingTxsRuns,
+                    rewardRuns: newRewardRuns
                 });
                 console.log("newState: " + newState);
                 // store the new state object in the component's state
@@ -122,6 +134,10 @@ class App extends Component {
                     <br/>
                     <Test description={this.state.missingTxsCheckDescription}/>
                     <MissingTxsList missingTxsRuns={this.state.missingTxsRuns}/>
+                    <br/>
+                    <Test description={this.state.rewardDescription}/>
+                    <RewardList rewardRuns={this.state.rewardRuns}/>
+
                 </div>
             </div>
         );
