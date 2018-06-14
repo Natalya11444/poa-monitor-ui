@@ -1,14 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Card, CardImg, CardText, CardBody, CardLink,
-    CardTitle, CardSubtitle } from 'reactstrap';
+import {Card, CardBody, CardTitle} from 'reactstrap';
 
 function Test(props) {
-    return  <Card>
+    return <Card>
         <CardBody>
             <CardTitle> <strong>{props.description}</strong></CardTitle>
         </CardBody>
-        </Card>
+    </Card>
 }
 
 Test.propTypes = {description: PropTypes.string.isRequired};

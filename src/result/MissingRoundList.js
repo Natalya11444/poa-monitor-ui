@@ -1,18 +1,12 @@
 import React from "react";
-import MissingRoundRun from "./missing-round-run";
-import { Table } from 'reactstrap';
-
-//"id": 229,
-//     "time": "2018-06-13T05:50:05.940Z",
-//     "passed": 0,
-//     "lastBlock": "2960979",
-//     "missedValidators":
+import MissingRoundRun from "./MissingRoundRun";
+import {Table} from 'reactstrap';
 
 function MissingRoundList(props) {
     console.log('props: ' + props);
     console.log('props j: ' + JSON.stringify(props));
     return (
-        <Table bordered responsive >
+        <Table bordered responsive>
             <thead>
             <tr>
                 <th>Id</th>
@@ -22,12 +16,11 @@ function MissingRoundList(props) {
                 <th>Missed validators</th>
             </tr>
             </thead>
-            <tbody >
-            {props.missingRoundsRuns.map(c => <MissingRoundRun run={c}/>)}
+            <tbody>
+            {props.missingRoundsRuns.map(r => <MissingRoundRun run={r}/>)}
             </tbody>
         </Table>
     );
-
 }
 
 export default MissingRoundList;
