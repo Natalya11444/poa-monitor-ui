@@ -15,6 +15,7 @@ class App extends Component {
         lastSeconds: 7200,
         passed: "All",
         test: 0,
+        isLocalTime: false,
 
         missingRoundsDescription: "Check if any validator nodes are missing rounds",
         missingRoundsRuns: [],
@@ -30,8 +31,6 @@ class App extends Component {
 
         reorgsDescription: "Check for reorgs",
         reorgs: []
-
-        // todo tests all, some
     };
 
     handleSubmit(event) {
@@ -43,108 +42,120 @@ class App extends Component {
         let lastSeconds = data.get('lastSeconds');
         let passed = data.get("passed");
         let test = data.get("test");
-        console.log('network: ' + network + ", lastSeconds: " + lastSeconds + ", passed: " + passed + ", test: " + test);
+        let isLocalTime = !!data.get("timeCheckbox");
+        console.log('network: ' + network + ", lastSeconds: " + lastSeconds + ", passed: " + passed + ", test: " + test + ", isLocalTime: " + isLocalTime.toString());
         const newState = Object.assign({}, this.state, {
             network: network,
             lastSeconds: lastSeconds,
             passed: passed,
-            test: test
+            test: test,
+            isLocalTime: isLocalTime
         });
         this.setState(newState);
-        let url = "http://poatest.westus.cloudapp.azure.com:3000/" + network + "/api/" + passed + "?lastseconds=" + lastSeconds;
-        console.log('url: ' + url);
-        this.getResults(url);
+        this.getResults();
     }
 
-    getResults(url) {
+    getResults() {
+        let url = "http://poatest.westus.cloudapp.azure.com:3000/" + this.state.network + "/api/" + this.state.passed + "?lastseconds=" + this.state.lastSeconds + "&test=" + this.state.test;
+        console.log('getResults, url: ' + url);
         axios
             .get(url)
             .then(response => {
                 const newMissingRoundsRuns = response.data.missingRoundCheck.runs.map(r => {
                     r.key = r.id;
+                    if (this.state.isLocalTime) {
+                        r.time = new Date(r.time).toLocaleString();
+                    }
                     return r;
                 });
                 const newMissingTxsRuns = response.data.missingTxsCheck.runs.map(r => {
                     r.key = r.id;
+                    if (this.state.isLocalTime) {
+                        r.time = new Date(r.time).toLocaleString();
+                    }
                     return r;
                 });
                 const newRewardRuns = response.data.miningRewardCheck.runs.map(r => {
                     r.key = r.id;
+                    if (this.state.isLocalTime) {
+                        r.time = new Date(r.time).toLocaleString();
+                    }
                     return r;
                 });
 
                 const newTxsPublicRpcRuns = response.data.txsViaPublicRpcCheck.runs.map(r => {
                     r.key = r.id;
+                    if (this.state.isLocalTime) {
+                        r.time = new Date(r.time).toLocaleString();
+                    }
                     return r;
                 });
 
                 const newReorgs = response.data.reorgsCheck.reorgs.map(r => {
                     r.key = r.id;
+                    if (this.state.isLocalTime) {
+                        r.time = new Date(r.time).toLocaleString();
+                    }
                     return r;
                 });
 
                 const newState = Object.assign({}, this.state, {
-                    missingRoundsRuns: newMissingRoundsRuns,
-                    missingTxsRuns: newMissingTxsRuns,
-                    rewardRuns: newRewardRuns,
-                    txsPublicRpcRuns: newTxsPublicRpcRuns,
-                    reorgs: newReorgs
+                    missingRoundsRuns: newMissingRoundsRuns.reverse(),
+                    missingTxsRuns: newMissingTxsRuns.reverse(),
+                    rewardRuns: newRewardRuns.reverse(),
+                    txsPublicRpcRuns: newTxsPublicRpcRuns.reverse(),
+                    reorgs: newReorgs.reverse()
                 });
                 console.log("newState: " + newState);
-                // store the new state object in the component's state
                 this.setState(newState);
             })
             .catch(error => console.log(error));
     }
 
-    // todo order
-
     componentDidMount() {
         console.log('componentDidMount');
-        let url = "http://poatest.westus.cloudapp.azure.com:3000/" + this.state.network + "/api/" + this.state.passed + "?lastseconds=" + this.state.lastSeconds;
-        console.log('url: ' + url);
-        this.getResults(url);
+        this.getResults();
     }
 
     render() {
         console.log('In Render, this.state.test: ' + this.state.test);
         let testElements = [
-            <div><Test description={this.state.missingRoundsDescription}/>
+            <div className="table"><Test description={this.state.missingRoundsDescription}/>
                 <MissingRoundList missingRoundsRuns={this.state.missingRoundsRuns}/>
-                <br/>
+                <br/><br/>
 
                 <Test description={this.state.missingTxsCheckDescription}/>
                 <MissingTxsList missingTxsRuns={this.state.missingTxsRuns}/>
-                <br/>
+                <br/><br/>
 
                 <Test description={this.state.rewardDescription}/>
                 <RewardList rewardRuns={this.state.rewardRuns}/>
-                <br/>
+                <br/><br/>
 
                 <Test description={this.state.txsPublicRpcDescription}/>
                 <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
-                <br/>
+                <br/><br/>
 
                 <Test description={this.state.reorgsDescription}/>
-                <ReorgsList reorgs={this.state.reorgs}/>`,
+                <ReorgsList reorgs={this.state.reorgs}/>
             </div>,
-            <div>
+            <div className="table">
                 <Test description={this.state.missingRoundsDescription}/>
                 <MissingRoundList missingRoundsRuns={this.state.missingRoundsRuns}/>
                 <br/>
             </div>,
 
-            <div><Test description={this.state.missingTxsCheckDescription}/>
+            <div className="table"><Test description={this.state.missingTxsCheckDescription}/>
                 <MissingTxsList missingTxsRuns={this.state.missingTxsRuns}/>
                 <br/>
             </div>,
-            <div><Test description={this.state.rewardDescription}/>
+            <div className="table"><Test description={this.state.rewardDescription}/>
                 <RewardList rewardRuns={this.state.rewardRuns}/>
             </div>,
-            <div><Test description={this.state.txsPublicRpcDescription}/>
+            <div className="table"><Test description={this.state.txsPublicRpcDescription}/>
                 <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
             </div>,
-            <div><Test description={this.state.reorgsDescription}/>
+            <div className="table"><Test description={this.state.reorgsDescription}/>
                 <ReorgsList reorgs={this.state.reorgs}/>
             </div>
         ];
@@ -154,15 +165,15 @@ class App extends Component {
         return (<div>
                 <div className="App">
                     <Form onSubmit={(e) => this.handleSubmit(e)} inline>
-                        <FormGroup className="formGroup" tag="fieldset">
-                            <FormGroup className="formGroup" check>
+                        <FormGroup className="formElement" tag="fieldset">
+                            <FormGroup className="formElement" check>
                                 <Label check>
                                     <Input type="radio" name="network" value="Sokol"
                                            defaultChecked={this.state.network === "Sokol"}/>{' '}
                                     Sokol
                                 </Label>
                             </FormGroup>
-                            <FormGroup className="formGroup" check>
+                            <FormGroup className="formElement" check>
                                 <Label check>
                                     <Input type="radio" name="network" value="Core"
                                            defaultChecked={this.state.network === "Core"}/>{' '}
@@ -170,21 +181,21 @@ class App extends Component {
                                 </Label>
                             </FormGroup>
                         </FormGroup>
-                        <FormGroup className="formGroup">
-                            <Label for="exampleText" className="formGroup">Last seconds</Label>
+                        <FormGroup className="formElement">
+                            <Label for="exampleText" className="formElement">Last seconds</Label>
                             <Input type="number" name="lastSeconds" id="exampleText"
                                    defaultValue={this.state.lastSeconds}/>
                         </FormGroup>
 
-                        <FormGroup className="formGroup" tag="fieldset">
-                            <FormGroup className="formGroup" check>
+                        <FormGroup className="formElement" tag="fieldset">
+                            <FormGroup className="formElement" check>
                                 <Label check>
                                     <Input type="radio" name="passed" value="all"
                                            defaultChecked={this.state.passed === "All"}/>{' '}
                                     All
                                 </Label>
                             </FormGroup>
-                            <FormGroup className="formGroup" check>
+                            <FormGroup className="formElement" check>
                                 <Label check>
                                     <Input type="radio" name="passed" value="failed"
                                            defaultChecked={this.state.passed === "Failed"}/>{' '}
@@ -193,8 +204,8 @@ class App extends Component {
                             </FormGroup>
                         </FormGroup>
 
-                        <FormGroup className="formGroup">
-                            <Label for="tests" className="formGroup">Tests</Label>
+                        <FormGroup className="formElement">
+                            <Label for="tests" className="formElement">Tests</Label>
                             <Input type="select" name="test" id="tests">
                                 <option value={0}>All</option>
                                 <option value={1}>Missing rounds</option>
@@ -205,7 +216,15 @@ class App extends Component {
                             </Input>
                         </FormGroup>
 
-                        <Button className="mb-2 mr-sm-2 mb-sm-0">Submit</Button>
+                        <FormGroup check className="formElement">
+                            <Label check>
+                                <Input type="checkbox" className="formElement" name="timeCheckbox"
+                                       defaultChecked={this.state.isLocalTime}/>{' '}
+                                Local time
+                            </Label>
+                        </FormGroup>
+
+                        <Button className="mb-2 mr-sm-2 mb-sm-0">Search</Button>
                     </Form>
 
                     {testToShow}
