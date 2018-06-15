@@ -14,6 +14,7 @@ class App extends Component {
         network: "Sokol",
         lastSeconds: 7200,
         passed: "All",
+        test: 0,
 
         missingRoundsDescription: "Check if any validator nodes are missing rounds",
         missingRoundsRuns: [],
@@ -41,11 +42,13 @@ class App extends Component {
         let network = data.get('network');
         let lastSeconds = data.get('lastSeconds');
         let passed = data.get("passed");
-        console.log('network: ' + network + ", lastSeconds: " + lastSeconds + ", passed: " + passed);
+        let test = data.get("test");
+        console.log('network: ' + network + ", lastSeconds: " + lastSeconds + ", passed: " + passed + ", test: " + test);
         const newState = Object.assign({}, this.state, {
             network: network,
             lastSeconds: lastSeconds,
-            passed: passed
+            passed: passed,
+            test: test
         });
         this.setState(newState);
         let url = "http://poatest.westus.cloudapp.azure.com:3000/" + network + "/api/" + passed + "?lastseconds=" + lastSeconds;
@@ -104,7 +107,50 @@ class App extends Component {
     }
 
     render() {
-        console.log('In Render');
+        console.log('In Render, this.state.test: ' + this.state.test);
+        let testElements = [
+            <div><Test description={this.state.missingRoundsDescription}/>
+                <MissingRoundList missingRoundsRuns={this.state.missingRoundsRuns}/>
+                <br/>
+
+                <Test description={this.state.missingTxsCheckDescription}/>
+                <MissingTxsList missingTxsRuns={this.state.missingTxsRuns}/>
+                <br/>
+
+                <Test description={this.state.rewardDescription}/>
+                <RewardList rewardRuns={this.state.rewardRuns}/>
+                <br/>
+
+                <Test description={this.state.txsPublicRpcDescription}/>
+                <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
+                <br/>
+
+                <Test description={this.state.reorgsDescription}/>
+                <ReorgsList reorgs={this.state.reorgs}/>`,
+            </div>,
+            <div>
+                <Test description={this.state.missingRoundsDescription}/>
+                <MissingRoundList missingRoundsRuns={this.state.missingRoundsRuns}/>
+                <br/>
+            </div>,
+
+            <div><Test description={this.state.missingTxsCheckDescription}/>
+                <MissingTxsList missingTxsRuns={this.state.missingTxsRuns}/>
+                <br/>
+            </div>,
+            <div><Test description={this.state.rewardDescription}/>
+                <RewardList rewardRuns={this.state.rewardRuns}/>
+            </div>,
+            <div><Test description={this.state.txsPublicRpcDescription}/>
+                <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
+            </div>,
+            <div><Test description={this.state.reorgsDescription}/>
+                <ReorgsList reorgs={this.state.reorgs}/>
+            </div>
+        ];
+
+        let testToShow = testElements[this.state.test];
+
         return (<div>
                 <div className="App">
                     <Form onSubmit={(e) => this.handleSubmit(e)} inline>
@@ -125,10 +171,11 @@ class App extends Component {
                             </FormGroup>
                         </FormGroup>
                         <FormGroup className="formGroup">
-                            <Label for="exampleText">Last seconds</Label>
+                            <Label for="exampleText" className="formGroup">Last seconds</Label>
                             <Input type="number" name="lastSeconds" id="exampleText"
                                    defaultValue={this.state.lastSeconds}/>
                         </FormGroup>
+
                         <FormGroup className="formGroup" tag="fieldset">
                             <FormGroup className="formGroup" check>
                                 <Label check>
@@ -145,21 +192,23 @@ class App extends Component {
                                 </Label>
                             </FormGroup>
                         </FormGroup>
+
+                        <FormGroup className="formGroup">
+                            <Label for="tests" className="formGroup">Tests</Label>
+                            <Input type="select" name="test" id="tests">
+                                <option value={0}>All</option>
+                                <option value={1}>Missing rounds</option>
+                                <option value={2}>Sending txs</option>
+                                <option value={3}>Reward check</option>
+                                <option value={4}>Sending txs via public rpc</option>
+                                <option value={5}>Reorgs</option>
+                            </Input>
+                        </FormGroup>
+
                         <Button className="mb-2 mr-sm-2 mb-sm-0">Submit</Button>
                     </Form>
 
-                    <Test description={this.state.missingRoundsDescription}/>
-                    <MissingRoundList missingRoundsRuns={this.state.missingRoundsRuns}/>
-                    <br/>
-                    <Test description={this.state.missingTxsCheckDescription}/>
-                    <MissingTxsList missingTxsRuns={this.state.missingTxsRuns}/>
-                    <br/>
-                    <Test description={this.state.rewardDescription}/>
-                    <RewardList rewardRuns={this.state.rewardRuns}/>
-                    <Test description={this.state.txsPublicRpcDescription}/>
-                    <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
-                    <Test description={this.state.reorgsDescription}/>
-                    <ReorgsList reorgs={this.state.reorgs}/>
+                    {testToShow}
 
                 </div>
             </div>
