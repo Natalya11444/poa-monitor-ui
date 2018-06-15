@@ -8,7 +8,7 @@ function TxPublicRpcRun(props) {
         <tr>
             <th scope="row">{props.run.id}</th>
             <td>{props.run.time}</td>
-            <td><img src={iconSrc}/></td>
+            <td><img className="passed-icon" src={iconSrc}/></td>
             <td>{props.run.errorMessage}</td>
             <td>{props.run.transactionHash}</td>
             <td>{props.run.blockNumber}</td>

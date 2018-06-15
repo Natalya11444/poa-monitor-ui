@@ -9,7 +9,7 @@ function MissingTxsRun(props) {
         <tr>
             <th scope="row">{props.run.id}</th>
             <td>{props.run.time}</td>
-            <td><img src={iconSrc}/></td>
+            <td><img className="passed-icon" src={iconSrc}/></td>
             <td>{props.run.lastBlock}</td>
             <td>
                 {props.run.validatorsMissedTxs.map(v => <ArrayElement element={v}/>)
