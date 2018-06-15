@@ -33,7 +33,7 @@ class App extends Component {
         reorgs: []
     };
 
-    handleSubmit(event) {
+    async handleSubmit(event) {
         console.log('handleSubmit');
         event.preventDefault();
         const data = new FormData(event.target);
@@ -51,7 +51,7 @@ class App extends Component {
             test: test,
             isLocalTime: isLocalTime
         });
-        this.setState(newState);
+       await this.setState(newState);
         this.getResults();
     }
 
