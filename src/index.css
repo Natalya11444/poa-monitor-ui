@@ -9,7 +9,7 @@ body {
 }
 
 .table {
-    padding: 50px 30px 50px 30px;
+    padding: 15px 30px 15px 30px;
 }
 
 .logo {
@@ -47,4 +47,13 @@ table th {
 
 .inline-element {
     display: inline-block !important;
+}
+
+.form-card {
+    padding: 25px 30px 5px 30px;
+}
+
+.form-header {
+    background-color: rgb(241, 231, 254) !important;
+    text-align: left;
 }

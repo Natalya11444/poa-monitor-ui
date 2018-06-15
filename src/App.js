@@ -9,7 +9,7 @@ import ReorgsList from "./result/ReorgsList";
 import axios from "axios";
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import logo from './img/poa-icon.png';
-import {Card} from 'reactstrap';
+import {Card, CardHeader} from 'reactstrap';
 
 class App extends Component {
     state = {
@@ -38,8 +38,8 @@ class App extends Component {
     async handleSubmit(event) {
         console.log('handleSubmit');
         event.preventDefault();
+        // todo FormData is not compatible with edge
         const data = new FormData(event.target);
-
         let network = data.get('network');
         let lastSeconds = data.get('lastSeconds');
         let passed = data.get("passed");
@@ -124,19 +124,19 @@ class App extends Component {
         let testElements = [
             <div className="table"><Test description={this.state.missingRoundsDescription}/>
                 <MissingRoundList missingRoundsRuns={this.state.missingRoundsRuns}/>
-                <br/><br/>
+                <br/>
 
                 <Test description={this.state.missingTxsCheckDescription}/>
                 <MissingTxsList missingTxsRuns={this.state.missingTxsRuns}/>
-                <br/><br/>
+                <br/>
 
                 <Test description={this.state.rewardDescription}/>
                 <RewardList rewardRuns={this.state.rewardRuns}/>
-                <br/><br/>
+                <br/>
 
                 <Test description={this.state.txsPublicRpcDescription}/>
                 <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
-                <br/><br/>
+                <br/>
 
                 <Test description={this.state.reorgsDescription}/>
                 <ReorgsList reorgs={this.state.reorgs}/>
@@ -174,8 +174,9 @@ class App extends Component {
 
                 </header>
                 <div className="App">
-                    <div className="table">
-                        <Card body outline >
+                    <div className="form-card">
+                        <Card body outline>
+                            <CardHeader className="form-header">Search parameters:</CardHeader>
                             <Form onSubmit={(e) => this.handleSubmit(e)} inline>
                                 <FormGroup className="formElement inline-element" tag="fieldset">
                                     <FormGroup className="formElement inline-element" check>
