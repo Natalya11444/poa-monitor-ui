@@ -9,7 +9,7 @@ import ReorgsList from "./result/ReorgsList";
 import axios from "axios";
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import logo from './img/poa-icon.png';
-import {Card, CardHeader} from 'reactstrap';
+import {Card, CardHeader, CardBody} from 'reactstrap';
 
 class App extends Component {
     state = {
@@ -37,6 +37,7 @@ class App extends Component {
 
     async handleSubmit(event) {
         console.log('handleSubmit');
+        //todo temp alert
         event.preventDefault();
         // todo FormData is not compatible with edge
         const data = new FormData(event.target);
@@ -175,73 +176,74 @@ class App extends Component {
                 </header>
                 <div className="App">
                     <div className="form-card">
-                        <Card body outline>
-                            <CardHeader className="form-header">Search parameters:</CardHeader>
-                            <Form onSubmit={(e) => this.handleSubmit(e)} inline>
-                                <FormGroup className="formElement inline-element" tag="fieldset">
-                                    <FormGroup className="formElement inline-element" check>
+                        <Card outline>
+                            <CardHeader className="form-header"><strong>Search parameters:</strong></CardHeader>
+                            <CardBody>
+                                <Form onSubmit={(e) => this.handleSubmit(e)} inline>
+                                    <FormGroup className="formElement inline-element" tag="fieldset">
+                                        <FormGroup className="formElement inline-element" check>
+                                            <Label check>
+                                                <Input type="radio" name="network" value="Sokol"
+                                                       defaultChecked={this.state.network === "Sokol"}/>{' '}
+                                                Sokol
+                                            </Label>
+                                        </FormGroup>
+                                        <FormGroup className="formElement inline-element" check>
+                                            <Label check>
+                                                <Input type="radio" name="network" value="Core"
+                                                       defaultChecked={this.state.network === "Core"}/>{' '}
+                                                Core
+                                            </Label>
+                                        </FormGroup>
+                                    </FormGroup>
+                                    <FormGroup className="formElement">
+                                        <Label for="exampleText" className="formElement">Last seconds</Label>
+                                        <Input type="number" name="lastSeconds" id="exampleText"
+                                               defaultValue={this.state.lastSeconds}/>
+                                    </FormGroup>
+
+                                    <FormGroup className="formElement inline-element" tag="fieldset">
+                                        <FormGroup className="formElement inline-element" check>
+                                            <Label check>
+                                                <Input type="radio" name="passed" value="all"
+                                                       defaultChecked={this.state.passed === "All"}/>{' '}
+                                                All
+                                            </Label>
+                                        </FormGroup>
+                                        <FormGroup className="formElement inline-element" check>
+                                            <Label check>
+                                                <Input type="radio" name="passed" value="failed"
+                                                       defaultChecked={this.state.passed === "Failed"}/>{' '}
+                                                Failed
+                                            </Label>
+                                        </FormGroup>
+                                    </FormGroup>
+
+                                    <FormGroup className="formElement">
+                                        <Label for="tests" className="formElement">Tests</Label>
+                                        <Input type="select" name="test" id="tests">
+                                            <option value={0}>All</option>
+                                            <option value={1}>Missing rounds</option>
+                                            <option value={2}>Sending txs</option>
+                                            <option value={3}>Reward check</option>
+                                            <option value={4}>Sending txs via public rpc</option>
+                                            <option value={5}>Reorgs</option>
+                                        </Input>
+                                    </FormGroup>
+
+                                    <FormGroup check className="formElement">
                                         <Label check>
-                                            <Input type="radio" name="network" value="Sokol"
-                                                   defaultChecked={this.state.network === "Sokol"}/>{' '}
-                                            Sokol
+                                            <Input type="checkbox" className="formElement" name="timeCheckbox"
+                                                   defaultChecked={this.state.isLocalTime}/>{' '}
+                                            Local time
                                         </Label>
                                     </FormGroup>
-                                    <FormGroup className="formElement inline-element" check>
-                                        <Label check>
-                                            <Input type="radio" name="network" value="Core"
-                                                   defaultChecked={this.state.network === "Core"}/>{' '}
-                                            Core
-                                        </Label>
-                                    </FormGroup>
-                                </FormGroup>
-                                <FormGroup className="formElement">
-                                    <Label for="exampleText" className="formElement">Last seconds</Label>
-                                    <Input type="number" name="lastSeconds" id="exampleText"
-                                           defaultValue={this.state.lastSeconds}/>
-                                </FormGroup>
 
-                                <FormGroup className="formElement inline-element" tag="fieldset">
-                                    <FormGroup className="formElement inline-element" check>
-                                        <Label check>
-                                            <Input type="radio" name="passed" value="all"
-                                                   defaultChecked={this.state.passed === "All"}/>{' '}
-                                            All
-                                        </Label>
-                                    </FormGroup>
-                                    <FormGroup className="formElement inline-element" check>
-                                        <Label check>
-                                            <Input type="radio" name="passed" value="failed"
-                                                   defaultChecked={this.state.passed === "Failed"}/>{' '}
-                                            Failed
-                                        </Label>
-                                    </FormGroup>
-                                </FormGroup>
-
-                                <FormGroup className="formElement">
-                                    <Label for="tests" className="formElement">Tests</Label>
-                                    <Input type="select" name="test" id="tests">
-                                        <option value={0}>All</option>
-                                        <option value={1}>Missing rounds</option>
-                                        <option value={2}>Sending txs</option>
-                                        <option value={3}>Reward check</option>
-                                        <option value={4}>Sending txs via public rpc</option>
-                                        <option value={5}>Reorgs</option>
-                                    </Input>
-                                </FormGroup>
-
-                                <FormGroup check className="formElement">
-                                    <Label check>
-                                        <Input type="checkbox" className="formElement" name="timeCheckbox"
-                                               defaultChecked={this.state.isLocalTime}/>{' '}
-                                        Local time
-                                    </Label>
-                                </FormGroup>
-
-                                <Button className="search-button">Search</Button>
-                            </Form>
+                                    <Button className="search-button">Search</Button>
+                                </Form>
+                            </CardBody>
                         </Card>
                     </div>
-
                     {testToShow}
 
                 </div>

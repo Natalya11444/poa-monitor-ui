@@ -6,7 +6,7 @@ function ReorgsList(props) {
     console.log('props: ' + props);
     console.log('props j: ' + JSON.stringify(props));
     return (
-        <Table bordered responsive>
+        <Table bordered responsive striped>
             <thead>
             <tr>
                 <th>Id</th>
