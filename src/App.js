@@ -32,7 +32,8 @@ class App extends Component {
         txsPublicRpcRuns: [],
 
         reorgsDescription: "Check for reorgs",
-        reorgs: []
+        reorgs: [],
+        loading: false,
     };
 
     async handleSubmit(event) {
@@ -52,7 +53,8 @@ class App extends Component {
             lastSeconds: lastSeconds,
             passed: passed,
             test: test,
-            isLocalTime: isLocalTime
+            isLocalTime: isLocalTime,
+            loading: true,
         });
         await this.setState(newState);
         this.getResults();
@@ -107,7 +109,8 @@ class App extends Component {
                     missingTxsRuns: newMissingTxsRuns.reverse(),
                     rewardRuns: newRewardRuns.reverse(),
                     txsPublicRpcRuns: newTxsPublicRpcRuns.reverse(),
-                    reorgs: newReorgs.reverse()
+                    reorgs: newReorgs.reverse(),
+                    loading: false,
                 });
                 console.log("newState: " + newState);
                 this.setState(newState);
@@ -244,6 +247,9 @@ class App extends Component {
                             </CardBody>
                         </Card>
                     </div>
+
+                    {this.state.loading && <div>Searching...</div>}
+
                     {testToShow}
 
                 </div>
