@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {Card, CardBody, CardTitle} from 'reactstrap';
 
-function Test(props) {
+function TestDescription(props) {
     return <Card>
         <CardBody>
             <CardTitle> <strong>{props.description}</strong></CardTitle>
@@ -10,5 +10,5 @@ function Test(props) {
     </Card>
 }
 
-Test.propTypes = {description: PropTypes.string.isRequired};
-export default Test;
+TestDescription.propTypes = {description: PropTypes.string.isRequired};
+export default TestDescription;

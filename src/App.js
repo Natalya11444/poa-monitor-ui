@@ -1,15 +1,16 @@
 import React, {Component} from 'react';
 import './App.css';
-import Test from "./result/Test";
-import MissingRoundList from "./result/MissingRoundList";
-import MissingTxsList from "./result/MissingTxsList";
-import RewardList from "./result/RewardList";
-import TxsPublicRpcList from "./result/TxsPublicRpcList";
-import ReorgsList from "./result/ReorgsList";
 import axios from "axios";
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import logo from './img/poa-icon.png';
 import {Card, CardHeader, CardBody} from 'reactstrap';
+
+import TestDescription from "./components/TestDescription";
+import MissingRoundList from "./components/MissingRoundList";
+import MissingTxsList from "./components/MissingTxsList";
+import RewardList from "./components/RewardList";
+import TxsPublicRpcList from "./components/TxsPublicRpcList";
+import ReorgsList from "./components/ReorgsList";
 
 class App extends Component {
     state = {
@@ -66,44 +67,18 @@ class App extends Component {
         axios
             .get(url)
             .then(response => {
-                const newMissingRoundsRuns = response.data.missingRoundCheck.runs.map(r => {
+                let convertResults = r => {
                     r.key = r.id;
                     if (this.state.isLocalTime) {
                         r.time = new Date(r.time).toLocaleString();
                     }
                     return r;
-                });
-                const newMissingTxsRuns = response.data.missingTxsCheck.runs.map(r => {
-                    r.key = r.id;
-                    if (this.state.isLocalTime) {
-                        r.time = new Date(r.time).toLocaleString();
-                    }
-                    return r;
-                });
-                const newRewardRuns = response.data.miningRewardCheck.runs.map(r => {
-                    r.key = r.id;
-                    if (this.state.isLocalTime) {
-                        r.time = new Date(r.time).toLocaleString();
-                    }
-                    return r;
-                });
-
-                const newTxsPublicRpcRuns = response.data.txsViaPublicRpcCheck.runs.map(r => {
-                    r.key = r.id;
-                    if (this.state.isLocalTime) {
-                        r.time = new Date(r.time).toLocaleString();
-                    }
-                    return r;
-                });
-
-                const newReorgs = response.data.reorgsCheck.reorgs.map(r => {
-                    r.key = r.id;
-                    if (this.state.isLocalTime) {
-                        r.time = new Date(r.time).toLocaleString();
-                    }
-                    return r;
-                });
-
+                };
+                const newMissingRoundsRuns = response.data.missingRoundCheck.runs.map(convertResults);
+                const newMissingTxsRuns = response.data.missingTxsCheck.runs.map(convertResults);
+                const newRewardRuns = response.data.miningRewardCheck.runs.map(convertResults);
+                const newTxsPublicRpcRuns = response.data.txsViaPublicRpcCheck.runs.map(convertResults);
+                const newReorgs = response.data.reorgsCheck.reorgs.map(convertResults);
                 const newState = Object.assign({}, this.state, {
                     missingRoundsRuns: newMissingRoundsRuns.reverse(),
                     missingTxsRuns: newMissingTxsRuns.reverse(),
@@ -123,51 +98,126 @@ class App extends Component {
         this.getResults();
     }
 
-    render() {
-        console.log('In Render, this.state.test: ' + this.state.test);
+    getSearchForm() {
+        return <div className="form-card">
+            <Card outline>
+                <CardHeader className="form-header"><strong>Search parameters:</strong></CardHeader>
+                <CardBody>
+                    <Form onSubmit={(e) => this.handleSubmit(e)} inline>
+                        <FormGroup className="formElement inline-element" tag="fieldset">
+                            <FormGroup className="formElement inline-element" check>
+                                <Label check>
+                                    <Input type="radio" name="network" value="Sokol"
+                                           defaultChecked={this.state.network === "Sokol"}/>{' '}
+                                    Sokol
+                                </Label>
+                            </FormGroup>
+                            <FormGroup className="formElement inline-element" check>
+                                <Label check>
+                                    <Input type="radio" name="network" value="Core"
+                                           defaultChecked={this.state.network === "Core"}/>{' '}
+                                    Core
+                                </Label>
+                            </FormGroup>
+                        </FormGroup>
+                        <FormGroup className="formElement">
+                            <Label for="exampleText" className="formElement">Last seconds</Label>
+                            <Input type="number" name="lastSeconds" id="exampleText"
+                                   defaultValue={this.state.lastSeconds}/>
+                        </FormGroup>
+
+                        <FormGroup className="formElement inline-element" tag="fieldset">
+                            <FormGroup className="formElement inline-element" check>
+                                <Label check>
+                                    <Input type="radio" name="passed" value="all"
+                                           defaultChecked={this.state.passed === "All"}/>{' '}
+                                    All
+                                </Label>
+                            </FormGroup>
+                            <FormGroup className="formElement inline-element" check>
+                                <Label check>
+                                    <Input type="radio" name="passed" value="failed"
+                                           defaultChecked={this.state.passed === "Failed"}/>{' '}
+                                    Failed
+                                </Label>
+                            </FormGroup>
+                        </FormGroup>
+
+                        <FormGroup className="formElement">
+                            <Label for="tests" className="formElement">Tests</Label>
+                            <Input type="select" name="test" id="tests">
+                                <option value={0}>All</option>
+                                <option value={1}>Missing rounds</option>
+                                <option value={2}>Sending txs</option>
+                                <option value={3}>Reward check</option>
+                                <option value={4}>Sending txs via public rpc</option>
+                                <option value={5}>Reorgs</option>
+                            </Input>
+                        </FormGroup>
+
+                        <FormGroup check className="formElement">
+                            <Label check>
+                                <Input type="checkbox" className="formElement" name="timeCheckbox"
+                                       defaultChecked={this.state.isLocalTime}/>{' '}
+                                Local time
+                            </Label>
+                        </FormGroup>
+
+                        <Button className="search-button">Search</Button>
+                    </Form>
+                </CardBody>
+            </Card>
+        </div>
+    }
+
+    getTestToShow() {
         let testElements = [
-            <div className="table"><Test description={this.state.missingRoundsDescription}/>
+            <div className="table"><TestDescription description={this.state.missingRoundsDescription}/>
                 <MissingRoundList missingRoundsRuns={this.state.missingRoundsRuns}/>
                 <br/>
 
-                <Test description={this.state.missingTxsCheckDescription}/>
+                <TestDescription description={this.state.missingTxsCheckDescription}/>
                 <MissingTxsList missingTxsRuns={this.state.missingTxsRuns}/>
                 <br/>
 
-                <Test description={this.state.rewardDescription}/>
+                <TestDescription description={this.state.rewardDescription}/>
                 <RewardList rewardRuns={this.state.rewardRuns}/>
                 <br/>
 
-                <Test description={this.state.txsPublicRpcDescription}/>
+                <TestDescription description={this.state.txsPublicRpcDescription}/>
                 <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
                 <br/>
 
-                <Test description={this.state.reorgsDescription}/>
+                <TestDescription description={this.state.reorgsDescription}/>
                 <ReorgsList reorgs={this.state.reorgs}/>
             </div>,
             <div className="table">
-                <Test description={this.state.missingRoundsDescription}/>
+                <TestDescription description={this.state.missingRoundsDescription}/>
                 <MissingRoundList missingRoundsRuns={this.state.missingRoundsRuns}/>
                 <br/>
             </div>,
 
-            <div className="table"><Test description={this.state.missingTxsCheckDescription}/>
+            <div className="table"><TestDescription description={this.state.missingTxsCheckDescription}/>
                 <MissingTxsList missingTxsRuns={this.state.missingTxsRuns}/>
                 <br/>
             </div>,
-            <div className="table"><Test description={this.state.rewardDescription}/>
+            <div className="table"><TestDescription description={this.state.rewardDescription}/>
                 <RewardList rewardRuns={this.state.rewardRuns}/>
             </div>,
-            <div className="table"><Test description={this.state.txsPublicRpcDescription}/>
+            <div className="table"><TestDescription description={this.state.txsPublicRpcDescription}/>
                 <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
             </div>,
-            <div className="table"><Test description={this.state.reorgsDescription}/>
+            <div className="table"><TestDescription description={this.state.reorgsDescription}/>
                 <ReorgsList reorgs={this.state.reorgs}/>
             </div>
         ];
+        return testElements[this.state.test];
+    }
 
-        let testToShow = testElements[this.state.test];
-
+    render() {
+        console.log('In Render, this.state.test: ' + this.state.test);
+        let testToShow = this.getTestToShow();
+        let searchForm = this.getSearchForm();
         return (
             <div>
                 <header className="App-header">
@@ -175,83 +225,11 @@ class App extends Component {
                         <img src={logo} className="App-logo" alt="logo"/>
                         <div className="logo-element"><h3> Test results </h3></div>
                     </div>
-
                 </header>
                 <div className="App">
-                    <div className="form-card">
-                        <Card outline>
-                            <CardHeader className="form-header"><strong>Search parameters:</strong></CardHeader>
-                            <CardBody>
-                                <Form onSubmit={(e) => this.handleSubmit(e)} inline>
-                                    <FormGroup className="formElement inline-element" tag="fieldset">
-                                        <FormGroup className="formElement inline-element" check>
-                                            <Label check>
-                                                <Input type="radio" name="network" value="Sokol"
-                                                       defaultChecked={this.state.network === "Sokol"}/>{' '}
-                                                Sokol
-                                            </Label>
-                                        </FormGroup>
-                                        <FormGroup className="formElement inline-element" check>
-                                            <Label check>
-                                                <Input type="radio" name="network" value="Core"
-                                                       defaultChecked={this.state.network === "Core"}/>{' '}
-                                                Core
-                                            </Label>
-                                        </FormGroup>
-                                    </FormGroup>
-                                    <FormGroup className="formElement">
-                                        <Label for="exampleText" className="formElement">Last seconds</Label>
-                                        <Input type="number" name="lastSeconds" id="exampleText"
-                                               defaultValue={this.state.lastSeconds}/>
-                                    </FormGroup>
-
-                                    <FormGroup className="formElement inline-element" tag="fieldset">
-                                        <FormGroup className="formElement inline-element" check>
-                                            <Label check>
-                                                <Input type="radio" name="passed" value="all"
-                                                       defaultChecked={this.state.passed === "All"}/>{' '}
-                                                All
-                                            </Label>
-                                        </FormGroup>
-                                        <FormGroup className="formElement inline-element" check>
-                                            <Label check>
-                                                <Input type="radio" name="passed" value="failed"
-                                                       defaultChecked={this.state.passed === "Failed"}/>{' '}
-                                                Failed
-                                            </Label>
-                                        </FormGroup>
-                                    </FormGroup>
-
-                                    <FormGroup className="formElement">
-                                        <Label for="tests" className="formElement">Tests</Label>
-                                        <Input type="select" name="test" id="tests">
-                                            <option value={0}>All</option>
-                                            <option value={1}>Missing rounds</option>
-                                            <option value={2}>Sending txs</option>
-                                            <option value={3}>Reward check</option>
-                                            <option value={4}>Sending txs via public rpc</option>
-                                            <option value={5}>Reorgs</option>
-                                        </Input>
-                                    </FormGroup>
-
-                                    <FormGroup check className="formElement">
-                                        <Label check>
-                                            <Input type="checkbox" className="formElement" name="timeCheckbox"
-                                                   defaultChecked={this.state.isLocalTime}/>{' '}
-                                            Local time
-                                        </Label>
-                                    </FormGroup>
-
-                                    <Button className="search-button">Search</Button>
-                                </Form>
-                            </CardBody>
-                        </Card>
-                    </div>
-
+                    {searchForm}
                     {this.state.loading && <div>Searching...</div>}
-
                     {testToShow}
-
                 </div>
             </div>
         );
