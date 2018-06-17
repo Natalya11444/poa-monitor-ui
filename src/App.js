@@ -3,6 +3,7 @@ import './App.css';
 import axios from "axios";
 import {Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import logo from './img/poa-icon.png';
+import spinner from './img/spinner.gif';
 import {Card, CardHeader, CardBody} from 'reactstrap';
 
 import TestDescription from "./components/TestDescription";
@@ -228,7 +229,7 @@ class App extends Component {
                 </header>
                 <div className="App">
                     {searchForm}
-                    {this.state.loading && <div>Searching...</div>}
+                    {this.state.loading && <img src={spinner}/>}
                     {testToShow}
                 </div>
             </div>
