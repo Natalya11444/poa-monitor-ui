@@ -63,7 +63,9 @@ class App extends Component {
     }
 
     getResults() {
-        let url = "http://poatest.westus.cloudapp.azure.com:3000/" + this.state.network + "/api/" + this.state.passed + "?lastseconds=" + this.state.lastSeconds + "&test=" + this.state.test;
+        let domain = process.env.REACT_APP_SERVICE_DOMAIN;
+        console.log('domain:' + domain);
+        let url = domain + "/" + this.state.network + "/api/" + this.state.passed + "?lastseconds=" + this.state.lastSeconds + "&test=" + this.state.test;
         console.log('getResults, url: ' + url);
         axios
             .get(url)
