@@ -1,7 +1,7 @@
 import React from "react";
-import ArrayElement from "./ArrayElement"
-import passedImg from '../img/passed-icon.png';
-import failedImg from '../img/failed-icon.png';
+import ArrayElement from "../ArrayElement"
+import passedImg from '../../img/passed-icon.png';
+import failedImg from '../../img/failed-icon.png';
 
 function MissingTxsRun(props) {
     let iconSrc = props.run.passed === 1 ? passedImg : failedImg;

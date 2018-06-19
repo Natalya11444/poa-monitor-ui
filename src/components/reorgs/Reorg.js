@@ -1,5 +1,5 @@
 import React from "react";
-import BlockElement from "./BlockElement";
+import BlockElement from "../BlockElement";
 
 function Reorg(props) {
     console.log('Reorg props: ' + props);

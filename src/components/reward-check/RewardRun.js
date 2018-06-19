@@ -1,8 +1,8 @@
 import React from "react";
-import passedImg from '../img/passed-icon.png';
-import failedImg from '../img/failed-icon.png';
+import passedImg from '../../img/passed-icon.png';
+import failedImg from '../../img/failed-icon.png';
 import RewardDetails from "./RewardDetails";
-import TxElement from "./TxElement";
+import TxElement from "../TxElement";
 
 function RewardRun(props) {
     let iconSrc = props.run.passed === 1 ? passedImg : failedImg;

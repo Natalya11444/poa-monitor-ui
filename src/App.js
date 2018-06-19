@@ -7,11 +7,11 @@ import spinner from './img/spinner.gif';
 import {Card, CardHeader, CardBody} from 'reactstrap';
 
 import TestDescription from "./components/TestDescription";
-import MissingRoundList from "./components/MissingRoundList";
-import MissingTxsList from "./components/MissingTxsList";
-import RewardList from "./components/RewardList";
-import TxsPublicRpcList from "./components/TxsPublicRpcList";
-import ReorgsList from "./components/ReorgsList";
+import MissingRoundList from "./components/missing-rounds/MissingRoundList";
+import MissingTxsList from "./components/txs-sending/MissingTxsList";
+import RewardList from "./components/reward-check/RewardList";
+import TxsPublicRpcList from "./components/txs-public-rpc/TxsPublicRpcList";
+import ReorgsList from "./components/reorgs/ReorgsList";
 
 class App extends Component {
     state = {
@@ -40,7 +40,6 @@ class App extends Component {
 
     async handleSubmit(event) {
         console.log('handleSubmit');
-        //todo temp alert
         event.preventDefault();
         // todo FormData is not compatible with edge
         const data = new FormData(event.target);
