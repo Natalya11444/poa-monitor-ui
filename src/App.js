@@ -230,7 +230,7 @@ class App extends Component {
                 </header>
                 <div className="App">
                     {searchForm}
-                    {this.state.loading && <img src={spinner}/>}
+                    {this.state.loading && <img src={spinner} alt="spinner"/>}
                     {testToShow}
                 </div>
             </div>

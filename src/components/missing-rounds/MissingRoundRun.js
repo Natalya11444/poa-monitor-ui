@@ -9,7 +9,7 @@ function MissingRoundRun(props) {
         <tr>
             <th scope="row">{props.run.id}</th>
             <td>{props.run.time}</td>
-            <td><img className="passed-icon" src={iconSrc}/></td>
+            <td><img className="passed-icon" src={iconSrc} alt="passed"/></td>
             <td>{props.run.lastBlock}</td>
             <td>
                 {props.run.missedValidators.map(c => <ArrayElement element={c}/>)
