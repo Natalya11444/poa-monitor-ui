@@ -10,6 +10,7 @@ import TestDescription from "./components/TestDescription";
 import MissingRoundList from "./components/missing-rounds/MissingRoundList";
 import MissingTxsList from "./components/txs-sending/MissingTxsList";
 import RewardList from "./components/reward-check/RewardList";
+import TransferRewardList from "./components/transfer-reward/TransferRewardList";
 import TxsPublicRpcList from "./components/txs-public-rpc/TxsPublicRpcList";
 import ReorgsList from "./components/reorgs/ReorgsList";
 
@@ -29,6 +30,9 @@ class App extends Component {
 
         rewardDescription: "Check if payout script works properly for all nodes (check mining address balance)",
         rewardRuns: [],
+
+        transferRewardDescription: "Check reward transfer from the mining key to payout key",
+        transferRewardRuns: [],
 
         txsPublicRpcDescription: "Periodically send txs via public rpc endpoint",
         txsPublicRpcRuns: [],
@@ -79,17 +83,19 @@ class App extends Component {
                 const newMissingRoundsRuns = response.data.missingRoundCheck.runs.map(convertResults);
                 const newMissingTxsRuns = response.data.missingTxsCheck.runs.map(convertResults);
                 const newRewardRuns = response.data.miningRewardCheck.runs.map(convertResults);
+                const newTransferRewardRuns = response.data.rewardTransferCheck.runs.map(convertResults);
                 const newTxsPublicRpcRuns = response.data.txsViaPublicRpcCheck.runs.map(convertResults);
                 const newReorgs = response.data.reorgsCheck.reorgs.map(convertResults);
                 const newState = Object.assign({}, this.state, {
                     missingRoundsRuns: newMissingRoundsRuns.reverse(),
                     missingTxsRuns: newMissingTxsRuns.reverse(),
                     rewardRuns: newRewardRuns.reverse(),
+                    transferRewardRuns: newTransferRewardRuns.reverse(),
                     txsPublicRpcRuns: newTxsPublicRpcRuns.reverse(),
                     reorgs: newReorgs.reverse(),
                     loading: false,
                 });
-                console.log("newState: " + newState);
+                console.log("newState: " + JSON.stringify(newState));
                 this.setState(newState);
             })
             .catch(error => console.log(error));
@@ -154,6 +160,7 @@ class App extends Component {
                                 <option value={3}>Reward check</option>
                                 <option value={4}>Sending txs via public rpc</option>
                                 <option value={5}>Reorgs</option>
+                                <option value={6}>Reward transfer</option>
                             </Input>
                         </FormGroup>
 
@@ -185,13 +192,16 @@ class App extends Component {
                 <TestDescription description={this.state.rewardDescription}/>
                 <RewardList rewardRuns={this.state.rewardRuns}/>
                 <br/>
-
                 <TestDescription description={this.state.txsPublicRpcDescription}/>
                 <TxsPublicRpcList txsPublicRpcRuns={this.state.txsPublicRpcRuns}/>
                 <br/>
 
                 <TestDescription description={this.state.reorgsDescription}/>
                 <ReorgsList reorgs={this.state.reorgs}/>
+
+                <TestDescription description={this.state.transferRewardDescription}/>
+                <TransferRewardList transferRewardRuns={this.state.transferRewardRuns}/>
+                <br/>
             </div>,
             <div className="table">
                 <TestDescription description={this.state.missingRoundsDescription}/>
@@ -211,6 +221,9 @@ class App extends Component {
             </div>,
             <div className="table"><TestDescription description={this.state.reorgsDescription}/>
                 <ReorgsList reorgs={this.state.reorgs}/>
+            </div>,
+            <div className="table"><TestDescription description={this.state.transferRewardDescription}/>
+                <TransferRewardList transferRewardRuns={this.state.transferRewardRuns}/>
             </div>
         ];
         return testElements[this.state.test];
